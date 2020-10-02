@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { LOGIN_MUTATION } from "../apollo/mutations";
 import { ArrowButton } from "../components/ArrowButton";
 import { Bold, Regular } from "../components/StyledText";
@@ -14,9 +15,15 @@ interface LoginProps {
 
 const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
   const [username, setUsername] = useState<string>("");
-  const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
 
-  console.log(data);
+  const [login, { data }] = useMutation(LOGIN_MUTATION, {
+    onCompleted: ({ token }) => {
+      AsyncStorage.setItem("TOKEN", token).then(() =>
+        navigation.navigate("Home")
+      );
+    },
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.top}>
