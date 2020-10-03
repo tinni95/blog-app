@@ -19,6 +19,7 @@ export type Like = {
 };
 
 export type Post = {
+  id: string;
   author: Author;
   content: string;
   comments: Comment[];

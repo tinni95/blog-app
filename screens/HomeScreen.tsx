@@ -1,31 +1,48 @@
 import { useQuery } from "@apollo/client";
 import React, { useEffect } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import { POSTS_QUERY } from "../apollo/query";
+import AddButton from "../components/AddButton";
 import { PostCard } from "../components/PostCard";
 import { Bold } from "../components/StyledText";
 import { StyledTextInput } from "../components/StyledTextInput";
 import Colors from "../constants/Colors";
+import Navigation from "../navigation";
 import { Post } from "../types";
 
-const HomeScreen: React.FC = () => {
-  const { data, loading } = useQuery(POSTS_QUERY);
+interface HomeScreenProps {
+  navigation: any;
+}
 
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const { data, loading, refetch } = useQuery(POSTS_QUERY);
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
   return (
     <View style={styles.container}>
-      <Bold>HOME</Bold>
+      <Bold style={{ letterSpacing: 5 }}>Posts</Bold>
       <StyledTextInput
         style={{ marginTop: 10 }}
         placeholderTextColor={Colors.WHITE}
         placeholder={"Cerca post"}
       />
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        data.posts.map((post: Post) => (
-          <PostCard post={post} onPress={() => {}} />
-        ))
-      )}
+      <FlatList
+        data={data.posts || []}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
+        }
+        keyExtractor={(item: Post) => item.id}
+        renderItem={({ item }) => <PostCard onPress={() => {}} post={item} />}
+      />
+      <AddButton onPress={() => navigation.navigate("CreatePost")} />
     </View>
   );
 };
@@ -34,7 +51,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.SEMI_WHITE,
-    padding: 5,
+    padding: 10,
+    paddingTop: 40,
   },
 });
 

@@ -8,7 +8,10 @@ import CreatePost from "../screens/CreatePost";
 import HomeScreen from "../screens/HomeScreen";
 import PostScreen from "../screens/PostScreen";
 
+import { MaterialIcons } from "@expo/vector-icons";
+
 import { RootStackParamList } from "../types";
+import Colors from "../constants/Colors";
 
 export default function Navigation() {
   return (
@@ -23,14 +26,9 @@ const Stack = createStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName={"Login"}
+      initialRouteName={"Home"}
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
       <Stack.Screen
         name="Home"
         component={HomeScreen}
@@ -44,7 +42,21 @@ function RootNavigator() {
       <Stack.Screen
         name="CreatePost"
         component={CreatePost}
-        options={{ title: "New Post" }}
+        options={{
+          title: "New Post",
+          headerTitleStyle: {
+            fontFamily: "quicksand-bold",
+          },
+          headerShown: true,
+          headerLeft: (props) => (
+            <MaterialIcons
+              name="keyboard-arrow-left"
+              size={30}
+              onPress={props.onPress}
+              color={Colors.BLUE}
+            />
+          ),
+        }}
       />
     </Stack.Navigator>
   );

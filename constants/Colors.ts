@@ -5,4 +5,6 @@ export default {
   PEACH: "#FFE0AA",
   WHITE: "#FFFFFF",
   SEMI_WHITE: "#FBFBFB",
+  GRAY_BG: "#F5F5F5",
+  GRAY_TXT: "#B1B4BF",
 };

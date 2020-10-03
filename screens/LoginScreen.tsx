@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import { LOGIN_MUTATION } from "../apollo/mutations";
@@ -8,19 +8,15 @@ import { Bold, Regular } from "../components/StyledText";
 import { StyledTextInput } from "../components/StyledTextInput";
 
 import Colors from "../constants/Colors";
+import context from "../context";
 
-interface LoginProps {
-  navigation: any;
-}
-
-const LoginScreen: React.FC<LoginProps> = ({ navigation }) => {
+const LoginScreen: React.FC<any> = () => {
   const [username, setUsername] = useState<string>("");
+  const loginContext = useContext(context);
 
   const [login, { data }] = useMutation(LOGIN_MUTATION, {
-    onCompleted: ({ token }) => {
-      AsyncStorage.setItem("TOKEN", token).then(() =>
-        navigation.navigate("Home")
-      );
+    onCompleted: (currentUser) => {
+      loginContext.login(currentUser.login.token);
     },
   });
 

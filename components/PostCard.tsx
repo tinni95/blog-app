@@ -14,13 +14,15 @@ interface PostCardProps {
 export function PostCard(props: PostCardProps) {
   const { post, onPress } = props;
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text>
-        <Medium style={styles.name}>{post.author.username}</Medium>
+        <Medium style={styles.name}>{post.author.username} </Medium>
         <Medium style={styles.when}>{moment(post.createdAt).fromNow()}</Medium>
       </Text>
-      <Bold style={{ fontSize: 25 }}>{post.title}</Bold>
-      <Regular style={{ fontSize: 25 }}>{post.content}</Regular>
+      <Bold style={{ fontSize: 25, color: Colors.BLUE, marginTop: 10 }}>
+        {post.title}
+      </Bold>
+      <Regular style={{ fontSize: 20 }}>{post.content}</Regular>
       <View style={styles.footer}>
         <Medium>{post.likes.length} Likes</Medium>
         <Medium>{post.comments.length} Comments</Medium>
@@ -30,6 +32,20 @@ export function PostCard(props: PostCardProps) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.WHITE,
+    marginTop: 15,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
   name: {
     color: Colors.BLUE,
   },
@@ -37,7 +53,8 @@ const styles = StyleSheet.create({
     color: Colors.BLUE_66,
   },
   footer: {
-    alignSelf: "flex-end",
+    flexDirection: "row",
+
     justifyContent: "space-between",
   },
 });
