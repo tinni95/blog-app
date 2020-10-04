@@ -40,7 +40,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
         }
         keyExtractor={(item: Post) => item.id}
-        renderItem={({ item }) => <PostCard onPress={() => {}} post={item} />}
+        renderItem={({ item }) => (
+          <PostCard
+            onPress={() => navigation.navigate("Post", { id: item.id })}
+            post={item}
+          />
+        )}
       />
       <AddButton onPress={() => navigation.navigate("CreatePost")} />
     </View>

@@ -22,7 +22,9 @@ export function PostCard(props: PostCardProps) {
       <Bold style={{ fontSize: 25, color: Colors.BLUE, marginTop: 10 }}>
         {post.title}
       </Bold>
-      <Regular style={{ fontSize: 20 }}>{post.content}</Regular>
+      <Regular style={{ fontSize: 20, paddingBottom: 10 }}>
+        {post.content.substring(0, 40)}
+      </Regular>
       <View style={styles.footer}>
         <Medium>{post.likes.length} Likes</Medium>
         <Medium>{post.comments.length} Comments</Medium>

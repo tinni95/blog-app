@@ -11,7 +11,10 @@ export type Author = {
 };
 
 export type Comment = {
+  author: Author;
+  id: string;
   content: string;
+  createdAt: string;
 };
 
 export type Like = {

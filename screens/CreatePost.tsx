@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { CREATE_POST } from "../apollo/mutations";
+import { POSTS_QUERY } from "../apollo/query";
 import { ArrowButton } from "../components/ArrowButton";
 import { StyledTextInput } from "../components/StyledTextInput";
 import Colors from "../constants/Colors";
@@ -13,6 +14,7 @@ const CreatePost: React.FC<any> = ({ navigation }) => {
     onCompleted: (data) => {
       navigation.goBack();
     },
+    refetchQueries: [{ query: POSTS_QUERY }],
     onError: (error) => {
       console.log(error);
     },

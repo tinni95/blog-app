@@ -37,7 +37,21 @@ function RootNavigator() {
       <Stack.Screen
         name="Post"
         component={PostScreen}
-        options={{ title: "" }}
+        options={{
+          title: "",
+          headerTitleStyle: {
+            fontFamily: "quicksand-bold",
+          },
+          headerShown: true,
+          headerLeft: (props) => (
+            <MaterialIcons
+              name="keyboard-arrow-left"
+              size={30}
+              onPress={props.onPress}
+              color={Colors.BLUE}
+            />
+          ),
+        }}
       />
       <Stack.Screen
         name="CreatePost"
