@@ -23,3 +23,19 @@ export const CREATE_COMMENT = gql`
     }
   }
 `;
+
+export const LIKE = gql`
+  mutation Like($commentId: ID, $postId: ID) {
+    like(commentId: $commentId, postId: $postId) {
+      id
+    }
+  }
+`;
+
+export const UNLIKE = gql`
+  mutation UnLike($commentId: ID, $postId: ID) {
+    unLike(commentId: $commentId, postId: $postId) {
+      id
+    }
+  }
+`;

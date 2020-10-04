@@ -29,6 +29,9 @@ export const GET_POST = gql`
         username
       }
       likes {
+        author {
+          id
+        }
         id
       }
       comments {

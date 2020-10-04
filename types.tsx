@@ -7,6 +7,7 @@ export type RootStackParamList = {
 };
 
 export type Author = {
+  id: string;
   username: string;
 };
 
@@ -18,7 +19,9 @@ export type Comment = {
 };
 
 export type Like = {
-  liked: Comment | Post;
+  comment: Comment | null;
+  post: Post | null;
+  author: Author;
 };
 
 export type Post = {

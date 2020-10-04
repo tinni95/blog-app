@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React, { useCallback } from "react";
 import {
   View,
@@ -13,13 +13,20 @@ import { Bold, Regular } from "../components/StyledText";
 import Colors from "../constants/Colors";
 import { Entypo } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
-import { Comment } from "../types";
+import { Comment, Like } from "../types";
 import CommentCard from "../components/CommentCard";
 import CommentTextInput from "../components/CommentTextInput";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { LIKE, UNLIKE } from "../apollo/mutations";
 
 const PostScreen: React.FC<any> = (props) => {
   const { id } = props.route.params;
+  const [like] = useMutation(LIKE, {
+    onCompleted: (data) => console.log(data),
+  });
+  const [unLike] = useMutation(UNLIKE, {
+    onCompleted: (data) => console.log(data),
+  });
   const { data: { getPost = {} } = {}, refetch, loading } = useQuery(GET_POST, {
     variables: { id },
     onCompleted: (data) => console.log(data),
@@ -32,6 +39,50 @@ const PostScreen: React.FC<any> = (props) => {
     return () => task.cancel();
   }, [refetch]);
 
+  const LikeButton = () => {
+    if (getPost.likes.find((l: Like) => l.author.id == "2")) {
+      return (
+        <View style={styles.indicator}>
+          <TouchableOpacity
+            onPress={() => unLike({ variables: { postId: id } })}
+            style={{
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Entypo name="heart" size={24} color={Colors.PEACH} />
+            <Bold
+              style={[styles.small, { color: Colors.WHITE, marginLeft: 3 }]}
+            >
+              {getPost.likes.length} Likes
+            </Bold>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.indicator}>
+          <TouchableOpacity
+            onPress={() => like({ variables: { postId: id } })}
+            style={{
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Entypo name="heart-outlined" size={24} color={Colors.PEACH} />
+            <Bold
+              style={[styles.small, { color: Colors.WHITE, marginLeft: 3 }]}
+            >
+              {getPost.likes.length} Likes
+            </Bold>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
   const listHeader = () => {
     return (
       <>
@@ -41,22 +92,7 @@ const PostScreen: React.FC<any> = (props) => {
           <Regular style={styles.body}>{getPost.content}</Regular>
         </View>
         <View style={styles.indicatorBar}>
-          <View style={styles.indicator}>
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Entypo name="heart-outlined" size={24} color={Colors.PEACH} />
-              <Bold
-                style={[styles.small, { color: Colors.WHITE, marginLeft: 3 }]}
-              >
-                {getPost.likes.length} Likes
-              </Bold>
-            </TouchableOpacity>
-          </View>
+          <LikeButton />
           <View style={styles.indicator}>
             <EvilIcons name="comment" size={24} color={Colors.PEACH} />
             <Bold style={[styles.small, { color: Colors.WHITE }]}>
