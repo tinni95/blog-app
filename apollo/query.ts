@@ -53,9 +53,15 @@ export const GET_POST = gql`
       comments {
         id
         author {
+          id
           username
         }
         content
+        likes {
+          author {
+            id
+          }
+        }
       }
       createdAt
     }

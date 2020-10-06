@@ -1,7 +1,7 @@
 import { ApolloProvider, gql, useQuery } from "@apollo/client";
 import AsyncStorage from "@react-native-community/async-storage";
 import { StatusBar } from "expo-status-bar";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import client from "./apollo/client";
 

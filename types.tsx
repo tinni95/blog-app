@@ -16,6 +16,7 @@ export type Comment = {
   id: string;
   content: string;
   createdAt: string;
+  likes: Like[];
 };
 
 export type Like = {
