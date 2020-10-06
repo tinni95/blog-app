@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   FlatList,
 } from "react-native";
-import { GET_POST } from "../apollo/query";
+import { CURRENTUSER, GET_POST, POSTS_QUERY } from "../apollo/query";
 import { Bold, Regular } from "../components/StyledText";
 import Colors from "../constants/Colors";
 import { Entypo } from "@expo/vector-icons";
@@ -18,19 +18,55 @@ import CommentCard from "../components/CommentCard";
 import CommentTextInput from "../components/CommentTextInput";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LIKE, UNLIKE } from "../apollo/mutations";
+import { Feather } from "@expo/vector-icons";
 
 const PostScreen: React.FC<any> = (props) => {
   const { id } = props.route.params;
   const [like] = useMutation(LIKE, {
     onCompleted: (data) => console.log(data),
+    refetchQueries: [
+      { query: GET_POST, variables: { id } },
+      { query: POSTS_QUERY },
+    ],
   });
   const [unLike] = useMutation(UNLIKE, {
     onCompleted: (data) => console.log(data),
+    refetchQueries: [
+      { query: GET_POST, variables: { id } },
+      { query: POSTS_QUERY },
+    ],
   });
+
   const { data: { getPost = {} } = {}, refetch, loading } = useQuery(GET_POST, {
     variables: { id },
-    onCompleted: (data) => console.log(data),
   });
+
+  const { data: { currentUser = {} } = {} } = useQuery(CURRENTUSER);
+
+  useEffect(() => {
+    if (getPost === {}) return;
+    if (getPost.author.id == currentUser.id)
+      props.navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate("EditPost", {
+                id,
+                content: getPost.content,
+                title: getPost.title,
+              })
+            }
+          >
+            <Feather
+              style={{ padding: 5 }}
+              name="edit"
+              size={24}
+              color={Colors.BLUE}
+            />
+          </TouchableOpacity>
+        ),
+      });
+  }, [getPost]);
 
   const _refetch = useCallback(() => {
     const task = InteractionManager.runAfterInteractions(async () => {
@@ -40,7 +76,7 @@ const PostScreen: React.FC<any> = (props) => {
   }, [refetch]);
 
   const LikeButton = () => {
-    if (getPost.likes.find((l: Like) => l.author.id == "2")) {
+    if (getPost.likes.find((l: Like) => l.author.id == currentUser.id)) {
       return (
         <View style={styles.indicator}>
           <TouchableOpacity

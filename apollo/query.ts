@@ -1,5 +1,13 @@
 import { gql } from "@apollo/client";
 
+export const CURRENTUSER = gql`
+  query CurrentUser {
+    currentUser {
+      id
+    }
+  }
+`;
+
 export const POSTS_QUERY = gql`
   query Posts($search: String) {
     posts(search: $search) {
@@ -26,6 +34,7 @@ export const GET_POST = gql`
       title
       content
       author {
+        id
         username
       }
       likes {

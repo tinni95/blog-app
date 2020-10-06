@@ -1,30 +1,69 @@
 import { useMutation } from "@apollo/client";
-import AsyncStorage from "@react-native-community/async-storage";
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { CREATE_POST } from "../apollo/mutations";
-import { POSTS_QUERY } from "../apollo/query";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Alert } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { DELETE_POST, EDIT_POST } from "../apollo/mutations";
+import { GET_POST, POSTS_QUERY } from "../apollo/query";
 import { ArrowButton } from "../components/ArrowButton";
 import { StyledTextInput } from "../components/StyledTextInput";
 import Colors from "../constants/Colors";
+import { AntDesign } from "@expo/vector-icons";
 
-const CreatePost: React.FC<any> = ({ navigation }) => {
-  const [createPost, { data }] = useMutation(CREATE_POST, {
+const EditPost: React.FC<any> = ({ navigation, route }) => {
+  const { id } = route.params;
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity style={{ padding: 5 }} onPress={() => onDelete()}>
+          <AntDesign name="delete" size={24} color={Colors.BLUE} />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
+  const [editPost] = useMutation(EDIT_POST, {
     onCompleted: (data) => {
       navigation.goBack();
+    },
+    refetchQueries: [
+      { query: POSTS_QUERY },
+      { query: GET_POST, variables: { id } },
+    ],
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const [deletePost] = useMutation(DELETE_POST, {
+    onCompleted: (data) => {
+      navigation.navigate("Home");
     },
     refetchQueries: [{ query: POSTS_QUERY }],
     onError: (error) => {
       console.log(error);
     },
   });
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
 
-  const onCreate = () => {
+  const [title, setTitle] = useState(route.params.title);
+  const [content, setContent] = useState(route.params.content);
+
+  const onDelete = () => {
+    Alert.alert("WARNING", "Are you sure you want to delete the post?", [
+      {
+        text: "OK",
+        onPress: () => deletePost({ variables: { id } }),
+      },
+      {
+        text: "No",
+      },
+    ]);
+  };
+
+  const onEdit = () => {
     if (!title || !content) alert("all fields mandatory");
-    else createPost({ variables: { content, title } });
+    else if (title === route.params.title && content === route.params.content)
+      navigation.goBack();
+    else editPost({ variables: { content, title, id } });
   };
 
   return (
@@ -59,7 +98,7 @@ const CreatePost: React.FC<any> = ({ navigation }) => {
       </View>
       <View style={styles.footer}>
         <ArrowButton
-          onPress={() => onCreate()}
+          onPress={() => onEdit()}
           style={{ top: -30, marginRight: 20 }}
         />
       </View>
@@ -86,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreatePost;
+export default EditPost;

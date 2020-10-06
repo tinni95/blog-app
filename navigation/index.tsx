@@ -12,6 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import { RootStackParamList } from "../types";
 import Colors from "../constants/Colors";
+import EditPost from "../screens/EditPost";
 
 export default function Navigation() {
   return (
@@ -58,6 +59,25 @@ function RootNavigator() {
         component={CreatePost}
         options={{
           title: "New Post",
+          headerTitleStyle: {
+            fontFamily: "quicksand-bold",
+          },
+          headerShown: true,
+          headerLeft: (props) => (
+            <MaterialIcons
+              name="keyboard-arrow-left"
+              size={30}
+              onPress={props.onPress}
+              color={Colors.BLUE}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditPost"
+        component={EditPost}
+        options={{
+          title: "Edit Post",
           headerTitleStyle: {
             fontFamily: "quicksand-bold",
           },

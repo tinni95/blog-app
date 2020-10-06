@@ -16,6 +16,22 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const EDIT_POST = gql`
+  mutation EditPost($content: String, $title: String, $id: ID!) {
+    editPost(content: $content, title: $title, id: $id) {
+      id
+    }
+  }
+`;
+
+export const DELETE_POST = gql`
+  mutation DeletePost($id: ID!) {
+    deletePost(id: $id) {
+      id
+    }
+  }
+`;
+
 export const CREATE_COMMENT = gql`
   mutation CreateComment($content: String!, $postId: ID!) {
     createComment(content: $content, postId: $postId) {
