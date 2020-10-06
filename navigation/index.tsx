@@ -13,8 +13,28 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { RootStackParamList } from "../types";
 import Colors from "../constants/Colors";
 import EditPost from "../screens/EditPost";
+import { useApolloClient, useQuery } from "@apollo/client";
+import { CURRENTUSER, LOCALUSER } from "../apollo/query";
+import context from "../context";
 
 export default function Navigation() {
+  const client = useApolloClient();
+  const loginContext = React.useContext(context);
+
+  useQuery(CURRENTUSER, {
+    onCompleted: ({ currentUser }) => {
+      client.writeQuery({
+        query: LOCALUSER,
+        data: {
+          currentUser,
+        },
+      });
+    },
+    onError: () => {
+      loginContext.logout();
+    },
+  });
+
   return (
     <NavigationContainer theme={DefaultTheme}>
       <RootNavigator />

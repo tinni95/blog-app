@@ -1,9 +1,16 @@
 import React, { KeyboardEvent, useEffect, useState } from "react";
-import { Keyboard, Platform, StyleSheet, View } from "react-native";
+import {
+  Keyboard,
+  Platform,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import Colors from "../constants/Colors";
 import { Feather } from "@expo/vector-icons";
 import { DeviceWidth } from "../constants/Layout";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+
 import { useMutation } from "@apollo/client";
 import { CREATE_COMMENT } from "../apollo/mutations";
 import { GET_POST, POSTS_QUERY } from "../apollo/query";

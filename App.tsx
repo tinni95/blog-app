@@ -1,4 +1,4 @@
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql, useQuery } from "@apollo/client";
 import AsyncStorage from "@react-native-community/async-storage";
 import { StatusBar } from "expo-status-bar";
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -15,6 +15,12 @@ export default function App() {
   const isLoadingComplete = useCachedResources();
 
   const [logged, setLogged] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem("TOKEN").then((token) => {
+      !!token ? setLogged(true) : null;
+    });
+  }, []);
 
   const login = (token: string) => {
     AsyncStorage.setItem("TOKEN", token).then(() => setLogged(true));

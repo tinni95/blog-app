@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { setContext } from "apollo-link-context";
+import { typeDefs, resolvers } from "./resolvers";
 
 const getLocalHostName = () => {
   // assumes you are running on LAN mode and running the server locally on port 5000
@@ -48,6 +49,8 @@ const cache = new InMemoryCache();
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache,
+  typeDefs,
+  resolvers,
 });
 
 export default client;

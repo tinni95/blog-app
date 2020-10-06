@@ -1,7 +1,7 @@
 import moment from "moment";
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+
 import Colors from "../constants/Colors";
 import { Post } from "../types";
 import { Bold, Medium, Regular } from "./StyledText";

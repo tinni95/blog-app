@@ -33,3 +33,10 @@ export type Post = {
   likes: Like[];
   createdAt: string;
 };
+
+export interface AuthPayload {
+  token: string;
+  user: {
+    id: string;
+  };
+}

@@ -1,8 +1,6 @@
 import { useMutation } from "@apollo/client";
-import AsyncStorage from "@react-native-community/async-storage";
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { CREATE_POST } from "../apollo/mutations";
 import { POSTS_QUERY } from "../apollo/query";
 import { ArrowButton } from "../components/ArrowButton";

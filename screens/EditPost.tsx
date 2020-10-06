@@ -1,7 +1,13 @@
 import { useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+
 import { DELETE_POST, EDIT_POST } from "../apollo/mutations";
 import { GET_POST, POSTS_QUERY } from "../apollo/query";
 import { ArrowButton } from "../components/ArrowButton";
@@ -30,7 +36,7 @@ const EditPost: React.FC<any> = ({ navigation, route }) => {
       { query: GET_POST, variables: { id } },
     ],
     onError: (error) => {
-      console.log(error);
+      console.log(error.extraInfo);
     },
   });
 

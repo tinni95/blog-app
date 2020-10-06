@@ -5,8 +5,8 @@ import {
   RefreshControl,
   StyleSheet,
   View,
+  FlatList,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import { POSTS_QUERY } from "../apollo/query";
 import AddButton from "../components/AddButton";
 import { PostCard } from "../components/PostCard";

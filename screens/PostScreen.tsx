@@ -1,14 +1,14 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
   RefreshControl,
-  InteractionManager,
   ActivityIndicator,
+  TouchableOpacity,
   FlatList,
 } from "react-native";
-import { CURRENTUSER, GET_POST, POSTS_QUERY } from "../apollo/query";
+import { GET_POST, POSTS_QUERY } from "../apollo/query";
 import { Bold, Regular } from "../components/StyledText";
 import Colors from "../constants/Colors";
 import { Entypo } from "@expo/vector-icons";
@@ -16,7 +16,6 @@ import { EvilIcons } from "@expo/vector-icons";
 import { Comment, Like } from "../types";
 import CommentCard from "../components/CommentCard";
 import CommentTextInput from "../components/CommentTextInput";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { LIKE, UNLIKE } from "../apollo/mutations";
 import { Feather } from "@expo/vector-icons";
 
@@ -37,14 +36,16 @@ const PostScreen: React.FC<any> = (props) => {
     ],
   });
 
-  const { data: { getPost = {} } = {}, refetch, loading } = useQuery(GET_POST, {
+  const {
+    data: { getPost = {}, currentUser = {} } = {},
+    refetch,
+    loading,
+  } = useQuery(GET_POST, {
     variables: { id },
   });
 
-  const { data: { currentUser = {} } = {} } = useQuery(CURRENTUSER);
-
   useEffect(() => {
-    if (getPost === {}) return;
+    if (loading) return;
     if (getPost.author.id == currentUser.id)
       props.navigation.setOptions({
         headerRight: () => (
@@ -67,13 +68,6 @@ const PostScreen: React.FC<any> = (props) => {
         ),
       });
   }, [getPost]);
-
-  const _refetch = useCallback(() => {
-    const task = InteractionManager.runAfterInteractions(async () => {
-      if (refetch) await refetch();
-    });
-    return () => task.cancel();
-  }, [refetch]);
 
   const LikeButton = () => {
     if (getPost.likes.find((l: Like) => l.author.id == currentUser.id)) {

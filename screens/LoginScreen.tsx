@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import AsyncStorage from "@react-native-community/async-storage";
+
 import { LOGIN_MUTATION } from "../apollo/mutations";
 import { ArrowButton } from "../components/ArrowButton";
 import { Bold, Regular } from "../components/StyledText";

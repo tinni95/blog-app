@@ -1,9 +1,16 @@
 import { gql } from "@apollo/client";
 
+export const LOCALUSER = gql`
+  query currentUser {
+    currentUser @client
+  }
+`;
+
 export const CURRENTUSER = gql`
   query CurrentUser {
     currentUser {
       id
+      username
     }
   }
 `;
@@ -51,6 +58,9 @@ export const GET_POST = gql`
         content
       }
       createdAt
+    }
+    currentUser @client {
+      id
     }
   }
 `;
