@@ -14,7 +14,7 @@ interface AddButtonProps {
 const AddButton: React.FC<AddButtonProps> = (props) => {
   return (
     <TouchableOpacity style={styles.container} onPress={props.onPress}>
-      <AntDesign name="pluscircle" size={60} color={Colors.PEACH} />
+      <AntDesign name="pluscircle" size={60} color={Colors.BLUE_66} />
     </TouchableOpacity>
   );
 };

@@ -43,6 +43,14 @@ export const CREATE_COMMENT = gql`
   }
 `;
 
+export const EDIT_COMMENT = gql`
+  mutation EditComment($content: String!, $id: ID!) {
+    editComment(content: $content, id: $id) {
+      id
+    }
+  }
+`;
+
 export const LIKE = gql`
   mutation Like($commentId: ID, $postId: ID) {
     like(commentId: $commentId, postId: $postId) {

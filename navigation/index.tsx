@@ -2,7 +2,6 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import * as React from "react";
-import LoginScreen from "../screens/LoginScreen";
 import CreatePost from "../screens/CreatePost";
 
 import HomeScreen from "../screens/HomeScreen";
@@ -26,7 +25,7 @@ export default function Navigation() {
       client.writeQuery({
         query: LOCALUSER,
         data: {
-          currentUser,
+          User: currentUser,
         },
       });
     },

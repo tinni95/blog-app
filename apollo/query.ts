@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const LOCALUSER = gql`
-  query currentUser {
-    currentUser @client
+  query CurrentUser {
+    User @client
   }
 `;
 
@@ -52,6 +52,7 @@ export const GET_POST = gql`
       }
       comments {
         id
+        createdAt
         author {
           id
           username
@@ -65,7 +66,7 @@ export const GET_POST = gql`
       }
       createdAt
     }
-    currentUser @client {
+    User @client {
       id
     }
   }

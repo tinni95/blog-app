@@ -1,39 +1,42 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
-  StyleSheet,
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
   FlatList,
+  StyleSheet,
 } from "react-native";
-import { GET_POST, POSTS_QUERY } from "../apollo/query";
+import { GET_POST } from "../apollo/query";
 import { Bold, Regular } from "../components/StyledText";
 import Colors from "../constants/Colors";
-import { Entypo } from "@expo/vector-icons";
+
 import { EvilIcons } from "@expo/vector-icons";
-import { Comment, Like } from "../types";
+import { Comment } from "../types";
 import CommentCard from "../components/CommentCard";
 import CommentTextInput from "../components/CommentTextInput";
-import { LIKE, UNLIKE } from "../apollo/mutations";
+
 import { Feather } from "@expo/vector-icons";
 import LikeButton from "../components/LikeButton";
+import context from "../context";
+import EditContext from "../editContext";
 
 const PostScreen: React.FC<any> = (props) => {
   const { id } = props.route.params;
 
-  const {
-    data: { getPost = {}, currentUser = {} } = {},
-    refetch,
-    loading,
-  } = useQuery(GET_POST, {
-    variables: { id },
-  });
+  const [edit, setEdit] = useState(false);
+  const { data: { getPost = {}, User = {} } = {}, refetch, loading } = useQuery(
+    GET_POST,
+    {
+      variables: { id },
+    }
+  );
+  let flatlistRef = useRef(null);
 
   useEffect(() => {
     if (loading) return;
-    if (getPost.author.id == currentUser.id)
+    if (getPost.author.id == User.id)
       props.navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity
@@ -66,7 +69,7 @@ const PostScreen: React.FC<any> = (props) => {
         </View>
         <View style={styles.indicatorBar}>
           <View style={styles.indicator}>
-            <LikeButton likes={getPost.likes} postId={id} id={currentUser.id} />
+            <LikeButton likes={getPost.likes} postId={id} id={User.id} />
           </View>
           <View style={styles.indicator}>
             <EvilIcons name="comment" size={24} color={Colors.PEACH} />
@@ -83,31 +86,43 @@ const PostScreen: React.FC<any> = (props) => {
     return <ActivityIndicator />;
   }
   return (
-    <View style={styles.container}>
-      <CommentTextInput id={id} />
-      <View style={{ flex: 1, paddingBottom: 80 }}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={listHeader()}
-          contentContainerStyle={{
-            backgroundColor: Colors.SEMI_WHITE,
-          }}
-          data={getPost.comments}
-          keyExtractor={(item: Comment) => item.id}
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={() => _refetch()} />
-          }
-          renderItem={({ item }: { item: Comment }) => (
-            <CommentCard comment={item} />
-          )}
-        />
+    <EditContext.Provider value={{ edit, setEdit: (v) => setEdit(v) }}>
+      <View style={styles.container}>
+        {!edit && <CommentTextInput id={id} />}
+        <View style={{ flex: 1, paddingBottom: 80 }}>
+          <FlatList
+            ref={flatlistRef}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={listHeader()}
+            contentContainerStyle={{
+              backgroundColor: Colors.GRAY_BG,
+              paddingBottom: edit ? 300 : 100,
+            }}
+            data={getPost.comments}
+            keyExtractor={(item: Comment) => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => refetch()}
+              />
+            }
+            renderItem={({ item, index }: { item: Comment; index: number }) => (
+              <CommentCard
+                index={index}
+                comment={item}
+                id={id}
+                flatlist={flatlistRef}
+              />
+            )}
+          />
+        </View>
       </View>
-    </View>
+    </EditContext.Provider>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.WHITE },
+  container: { flex: 1, backgroundColor: Colors.GRAY_BG },
   mainContainer: { padding: 10, backgroundColor: Colors.WHITE },
   small: { fontSize: 12 },
   body: { fontSize: 14, marginTop: 30, marginBottom: 20 },

@@ -46,7 +46,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
   if (loading) return <ActivityIndicator />;
 
-  if (likes.find((l: Like) => l.author.id == data.currentUser.id)) {
+  if (likes.find((l: Like) => l.author.id == data.User.id)) {
     return (
       <TouchableOpacity
         onPress={() => unLike({ variables: { postId, commentId } })}
