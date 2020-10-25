@@ -44,7 +44,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpLink = createHttpLink({
-  uri: `http${uri}`,
+  uri: `https${uri}`,
 });
 
 const splitLink = split(
