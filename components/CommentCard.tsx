@@ -23,11 +23,16 @@ interface CommentCardProps {
   id: string;
   flatlist: any;
   index: number;
+  subscribeToMore: () => void;
 }
 
 const CommentCard: React.FC<CommentCardProps> = (props) => {
-  const { comment, flatlist, id, index } = props;
-  console.log(props);
+  const { comment, flatlist, id, index, subscribeToMore } = props;
+
+  useEffect(() => {
+    subscribeToMore();
+  }, []);
+
   const { data: { User = {} } = {} } = useQuery(LOCALUSER);
   const context = useContext(EditContext);
   const [editComment, { data, loading }] = useMutation(EDIT_COMMENT, {
@@ -64,7 +69,7 @@ const CommentCard: React.FC<CommentCardProps> = (props) => {
 
   if (loading) return <ActivityIndicator />;
   return (
-    <View style={[styles.container, { zIndex: 2 }]}>
+    <View style={styles.container}>
       <View style={styles.row}>
         <Text>
           <Bold style={styles.small}>{comment.author.username} </Bold>
@@ -89,6 +94,7 @@ const CommentCard: React.FC<CommentCardProps> = (props) => {
           <Regular>{comment.content}</Regular>
           <View style={{ height: 10 }} />
           <LikeButton
+            postId={id}
             commentId={comment.id}
             likes={comment.likes}
             style={{ color: Colors.BLUE }}

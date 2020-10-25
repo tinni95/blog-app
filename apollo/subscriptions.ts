@@ -11,6 +11,9 @@ export const POSTS_SUBSCRIPTION = gql`
       }
       likes {
         id
+        author {
+          id
+        }
       }
       comments {
         id
@@ -31,9 +34,27 @@ export const COMMENTS_SUBSCRIPTION = gql`
       }
       content
       likes {
+        id
         author {
           id
         }
+      }
+    }
+  }
+`;
+
+export const LIKES_SUBSCRIPTION = gql`
+  subscription likeAdded($postId: ID, $commentId: ID) {
+    likeAdded(postId: $postId, commentId: $commentId) {
+      id
+      author {
+        id
+      }
+      comment {
+        id
+      }
+      post {
+        id
       }
     }
   }

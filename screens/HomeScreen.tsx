@@ -14,7 +14,7 @@ import { PostCard } from "../components/PostCard";
 import { Bold } from "../components/StyledText";
 import { StyledTextInput } from "../components/StyledTextInput";
 import Colors from "../constants/Colors";
-import Navigation from "../navigation";
+
 import { Post } from "../types";
 
 interface HomeScreenProps {
@@ -22,20 +22,38 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { data, loading, refetch, subscribeToMore } = useQuery(POSTS_QUERY);
+  const {
+    data: { posts = [] } = {},
+    loading,
+    refetch,
+    subscribeToMore,
+  } = useQuery(POSTS_QUERY);
+  const [search, setSearch] = useState("");
+  const [filteredPosts, setPosts] = useState([]);
 
   useEffect(() => {
-    if (loading) return;
-    subscribeToMore({
-      document: POSTS_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const newFeedItem = subscriptionData.data.postAdded;
-        return Object.assign({}, prev, {
-          posts: [newFeedItem, ...prev.posts],
-        });
-      },
-    });
+    setPosts(
+      posts.filter((post: any) => {
+        return (
+          post.content.toLowerCase().includes(search.toLowerCase()) ||
+          post.title.toLowerCase().includes(search.toLowerCase())
+        );
+      })
+    );
+  }, [search, posts]);
+
+  useEffect(() => {
+    !loading &&
+      subscribeToMore({
+        document: POSTS_SUBSCRIPTION,
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+          const newFeedItem = subscriptionData.data.postAdded;
+          return Object.assign({}, prev, {
+            posts: [newFeedItem, ...prev.posts],
+          });
+        },
+      });
   }, []);
 
   if (loading) {
@@ -45,12 +63,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     <View style={styles.container}>
       <Bold style={{ letterSpacing: 5 }}>Posts</Bold>
       <StyledTextInput
+        value={search}
+        onChangeText={(t) => setSearch(t)}
         style={{ marginTop: 10 }}
         placeholderTextColor={Colors.WHITE}
         placeholder={"Cerca post"}
       />
       <FlatList
-        data={data.posts || []}
+        data={filteredPosts}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
         }

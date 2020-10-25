@@ -21,7 +21,10 @@ import { Feather } from "@expo/vector-icons";
 import LikeButton from "../components/LikeButton";
 
 import EditContext from "../editContext";
-import { COMMENTS_SUBSCRIPTION } from "../apollo/subscriptions";
+import {
+  COMMENTS_SUBSCRIPTION,
+  LIKES_SUBSCRIPTION,
+} from "../apollo/subscriptions";
 
 const PostScreen: React.FC<any> = (props) => {
   const { id } = props.route.params;
@@ -36,6 +39,14 @@ const PostScreen: React.FC<any> = (props) => {
     variables: { id },
   });
   let flatlistRef = useRef(null);
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener("focus", () => {
+      refetch(id);
+    });
+
+    return unsubscribe;
+  }, [props.navigation]);
 
   useEffect(() => {
     if (loading) return;
@@ -63,22 +74,39 @@ const PostScreen: React.FC<any> = (props) => {
   }, [getPost]);
 
   useEffect(() => {
-    subscribeToMore({
-      document: COMMENTS_SUBSCRIPTION,
-      variables: { postId: id },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const newFeedItem = subscriptionData.data.commentAdded;
-        const newObj = Object.assign({}, prev, {
-          getPost: {
-            ...prev.getPost,
-            comments: [newFeedItem, ...prev.getPost.comments],
-          },
-        });
-        console.log("newObj", newObj);
-        return newObj;
-      },
-    });
+    !loading &&
+      subscribeToMore({
+        document: COMMENTS_SUBSCRIPTION,
+        variables: { postId: id },
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+          const newFeedItem = subscriptionData.data.commentAdded;
+          const newObj = Object.assign({}, prev, {
+            getPost: {
+              ...prev.getPost,
+              comments: [newFeedItem, ...prev.getPost.comments],
+            },
+          });
+          return newObj;
+        },
+      });
+
+    !loading &&
+      subscribeToMore({
+        document: LIKES_SUBSCRIPTION,
+        variables: { postId: id },
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+          const newFeedItem = subscriptionData.data.likeAdded;
+          const newObj = Object.assign({}, prev, {
+            getPost: {
+              ...prev.getPost,
+              likes: [newFeedItem, ...prev.getPost.likes],
+            },
+          });
+          return newObj;
+        },
+      });
   }, []);
 
   const listHeader = () => {
@@ -130,6 +158,36 @@ const PostScreen: React.FC<any> = (props) => {
             }
             renderItem={({ item, index }: { item: Comment; index: number }) => (
               <CommentCard
+                subscribeToMore={() => {
+                  subscribeToMore({
+                    document: LIKES_SUBSCRIPTION,
+                    variables: { commentId: item.id },
+                    updateQuery: (prev, { subscriptionData }) => {
+                      if (!subscriptionData.data) return prev;
+                      const newFeedItem = subscriptionData.data.likeAdded;
+                      const newComments = prev.getPost.comments.map(
+                        (comment: any) => {
+                          if (comment.id == newFeedItem.comment.id) {
+                            return {
+                              ...comment,
+                              likes: [newFeedItem, ...comment.likes],
+                            };
+                          }
+                          return comment;
+                        }
+                      );
+                      const newObj = Object.assign({}, prev, {
+                        getPost: {
+                          ...prev.getPost,
+                          comments: {
+                            ...newComments,
+                          },
+                        },
+                      });
+                      return newObj;
+                    },
+                  });
+                }}
                 index={index}
                 comment={item}
                 id={id}
@@ -139,12 +197,6 @@ const PostScreen: React.FC<any> = (props) => {
           />
         </View>
       </View>
-      {edit && (
-        <TouchableOpacity
-          onPress={() => setEdit(false)}
-          style={styles.overlay}
-        />
-      )}
     </EditContext.Provider>
   );
 };
@@ -166,16 +218,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
     flexDirection: "row",
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: Colors.GRAY_BG,
-    opacity: 0.3,
-    zIndex: 1,
   },
 });
 export default PostScreen;

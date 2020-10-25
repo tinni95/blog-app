@@ -26,10 +26,15 @@ const getLocalHostName = () => {
   return hostname;
 };
 
-const uri =
-  Platform.OS === "web"
-    ? "://localhost:4000/graphql"
-    : "://localhost:4000/graphql".replace("localhost", getLocalHostName());
+let uri;
+if (process.env.HEROKU) {
+  uri = "://giocode-blog-app.herokuapp.com/graphql";
+} else {
+  uri =
+    Platform.OS === "web"
+      ? "://localhost:4000/graphql"
+      : "://localhost:4000/graphql".replace("localhost", getLocalHostName());
+}
 
 const wsLink = new WebSocketLink({
   uri: `ws${uri}`,
