@@ -27,7 +27,7 @@ const getLocalHostName = () => {
 };
 
 let uri;
-if (process.env.HEROKU) {
+if (process.env.NODE_ENV === "production") {
   uri = "://giocode-blog-app.herokuapp.com/graphql";
 } else {
   uri =
