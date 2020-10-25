@@ -37,7 +37,7 @@ if (true) {
 }
 
 const wsLink = new WebSocketLink({
-  uri: `ws${uri}`,
+  uri: `wss${uri}`,
   options: {
     reconnect: true,
   },
